@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trivia Colombiana</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1534683732343-d50b52e43073?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #quiz-container {
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    button {
+      padding: 14px 28px;
+      margin: 10px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #00f2ff, #00707d);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 -4px 0 rgba(255,255,255,0.2);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.08);
+      background: linear-gradient(145deg, #00c3cb, #004d57);
+    }
+
+    #chat, #blog {
+      margin-top: 50px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 25px;
+      border-radius: 20px;
+    }
+
+    textarea, input[type="text"] {
+      width: 85%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #f0f0f0;
+      color: #333;
+      font-size: 16px;
+    }
+
+    #chat-messages p, #blog-feed div {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      border-radius: 10px;
+      margin: 10px auto;
+      width: 85%;
+    }
+
+    .mascota {
+      width: 200px;
+      animation: bounce 3s infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+  <img src="https://cdn.pixabay.com/photo/2023/11/28/11/48/ai-generated-8417695_1280.png" alt="Mascota Guía" class="mascota" />
+  <h1>🎯 Trivia Colombiana Juvenil</h1>
+  <div id="quiz-container">
+    <div id="question">Cargando pregunta...</div>
+    <div id="options"></div>
+    <div id="result"></div>
+    <button onclick="nextQuestion()">Siguiente</button>
+    <div id="score"></div>
+  </div>
+
+  <div id="chat">
+    <h2>💬 Chat entre jugadores</h2>
+    <div id="chat-messages"></div>
+    <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+
+  <div id="blog">
+    <h2>📝 Blog del Juego</h2>
+    <textarea id="blog-post" placeholder="Escribe tu publicación..."></textarea><br>
+    <button onclick="publishPost()">Publicar</button>
+    <div id="blog-feed"></div>
+  </div>
+
+  <video autoplay loop muted style="width: 100%; margin-top: 30px; border-radius: 20px; max-height: 300px; object-fit: cover;">
+    <source src="https://cdn.pixabay.com/video/2023/06/14/172822-829396257_large.mp4" type="video/mp4">
+    Tu navegador no soporta video.
+  </video>
+
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/09/26/audio_bfe3e8e0d8.mp3?filename=energy-funk-techno-184478.mp3" type="audio/mpeg">
+    Tu navegador no soporta música de fondo.
+  </audio>
+
+  <script>
+    const questions = [
+      {
+        q: '¿Cuál es la capital de Colombia?',
+        options: ['Bogotá', 'Medellín', 'Cali'],
+        answer: 0
+      },
+      {
+        q: '¿Cuál es un plato típico colombiano?',
+        options: ['Pizza', 'Arepa', 'Taco'],
+        answer: 1
+      },
+      {
+        q: '¿Qué océano baña la costa pacífica colombiana?',
+        options: ['Atlántico', 'Índico', 'Pacífico'],
+        answer: 2
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = questions[current];
+      document.getElementById('question').textContent = q.q;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(index) {
+      if (index === questions[current].answer) {
+        score++;
+        document.getElementById('result').textContent = '✅ ¡Correcto!';
+      } else {
+        document.getElementById('result').textContent = '❌ Incorrecto';
+      }
+      document.getElementById('score').textContent = `Puntaje: ${score}`;
+    }
+
+    function nextQuestion() {
+      current++;
+      document.getElementById('result').textContent = '';
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        document.getElementById('question').textContent = '🎉 Juego terminado';
+        document.getElementById('options').innerHTML = '';
+        document.getElementById('score').textContent = `Puntaje final: ${score}`;
+      }
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value;
+      if (message.trim() !== '') {
+        const chat = document.getElementById('chat-messages');
+        const p = document.createElement('p');
+        p.textContent = `🧑 ${message}`;
+        chat.appendChild(p);
+        chat.scrollTop = chat.scrollHeight;
+        input.value = '';
+      }
+    }
+
+    function publishPost() {
+      const post = document.getElementById('blog-post').value;
+      if (post.trim() !== '') {
+        const blogFeed = document.getElementById('blog-feed');
+        const div = document.createElement('div');
+        div.textContent = `📝 ${post}`;
+        blogFeed.prepend(div);
+        document.getElementById('blog-post').value = '';
+      }
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
